@@ -120,8 +120,10 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | bash -s -- -y --
 
 WORKDIR /opt
 
-# Clone lively.next
-RUN git clone --depth 1 https://github.com/LivelyKernel/lively.next.git /opt/lively.next
+# Clone repo/ref (override at build time for forks/branches)
+ARG REPO_SLUG=tashabits/lively.next
+ARG REPO_REF=main
+RUN git clone --depth 1 --branch "${REPO_REF}" "https://github.com/${REPO_SLUG}.git" /opt/lively.next
 
 WORKDIR /opt/lively.next
 
