@@ -55,7 +55,35 @@ For some more advanced development operations (such as bulk testing from the com
 >
 > If you want to change files outside of `lively` (i.e., in a normal editor), while still having the changes be available in lively when opening the file, you'll need to install `entr` from its [repository](https://github.com/eradman/entr). Usually, when working inside of `lively.next`, this will not be an issue, but it can be handy when working heavily on the core of `lively`. *This feature works semi-reliable at the moment. If you are interested in this and would like to help debug this, please reach out!*
 
-### Installation Instructions
+### Docker Compose Setup
+
+Docker Compose is an optional development launcher, not a replacement for the native install and run-server workflow below. Use the native setup when you want `lively.next` to run directly on your host. Use Compose when you want Docker to provide Node.js, Bun, Rust, Python packages, browser dependencies, and the other development tools.
+
+From the repository root, run:
+
+```bash
+docker compose up --build
+```
+
+The first run installs project dependencies and builds generated artifacts inside Docker, so it can take several minutes. When the server is ready, open [http://localhost:9011](http://localhost:9011).
+
+The Compose setup bind-mounts this checkout into the container at `/workspace`. Files changed from inside the container are the files in your host checkout, so source edits are shared with native tools. Generated dependency, database, cache, and build directory contents are isolated in Docker named volumes instead of being shared with native runs. Docker may create empty mount-point directories in the checkout, but the Linux container artifacts inside those paths stay separate from macOS/Linux/WSL artifacts created by the manual setup.
+
+When Compose has to perform a fresh install, the entrypoint also removes ignored package-level `.cachedImportMap.json` files before regenerating them so stale host/native import-map caches do not affect Docker startup.
+
+Stop the stack without deleting Docker's generated state:
+
+```bash
+docker compose down
+```
+
+Remove the Docker-generated state and force the next Compose start to behave like a fresh install:
+
+```bash
+docker compose down -v
+```
+
+### Manual Installation Instructions
 
 If you are on macOS, install the required tooling first:
 
